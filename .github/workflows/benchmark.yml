@@ -49,3 +49,25 @@ jobs:
           EXPERIMENT_ID: ${{ inputs.experiment_id }}
         run: |
           python benchmarking/run_benchmarks.py --experiment-id "$EXPERIMENT_ID"
+      - name: Publish artifacts to gh-pages
+        env:
+          EXPERIMENT_ID: ${{ inputs.experiment_id }}
+        run: |
+          set -e
+          if ! git ls-remote --exit-code --heads origin gh-pages; then
+            git checkout --orphan gh-pages
+            git rm -rf . || true
+            git commit --allow-empty -m "Initialize gh-pages"
+            git push origin gh-pages
+            git switch -
+          fi
+          git fetch origin gh-pages
+          git worktree add gh-pages-work gh-pages
+          mkdir -p gh-pages-work/experiments/$EXPERIMENT_ID
+          cp -r experiments/$EXPERIMENT_ID/* gh-pages-work/experiments/$EXPERIMENT_ID/
+          cd gh-pages-work
+          git add experiments/$EXPERIMENT_ID
+          git commit -m "Publish results $EXPERIMENT_ID" || echo "No changes to commit"
+          git push origin gh-pages
+          cd ..
+          git worktree remove gh-pages-work --force

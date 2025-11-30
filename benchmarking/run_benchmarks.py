@@ -74,15 +74,7 @@ def main():
         json.dump({'experimentId': args.experiment_id, 'results': results}, f)
     subprocess.run([sys.executable, 'benchmarking/train_model.py', '--experiment-id', args.experiment_id], check=True)
     subprocess.run([sys.executable, 'benchmarking/generate_report.py', '--experiment-id', args.experiment_id], check=True)
-    subprocess.run(['git', 'checkout', 'gh-pages'], check=True)
-    os.makedirs(os.path.join('experiments', args.experiment_id), exist_ok=True)
-    for name in ['raw_results.json', 'results.json', 'report.md']:
-        src = os.path.join('experiments', args.experiment_id, name)
-        subprocess.run(['git', 'add', src], check=True)
-    subprocess.run(['git', 'add', os.path.join('experiments', args.experiment_id, 'ml', 'model.onnx')], check=True)
-    subprocess.run(['git', 'add', os.path.join('experiments', args.experiment_id, 'ml', 'memory.onnx')], check=True)
-    subprocess.run(['git', 'commit', '-m', f'Publish results {args.experiment_id}'], check=True)
-    subprocess.run(['git', 'push'], check=True)
+    # Publishing to gh-pages is handled by the workflow using a dedicated worktree
 
 if __name__ == '__main__':
     main()
