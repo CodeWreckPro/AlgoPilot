@@ -35,8 +35,4 @@
     "autoprefixer": "^10.4.20",
     "vitest": "^1.6.1"
   }
-  ,
-  "optionalDependencies": {
-    "uuid": "^9.0.1"
-  }
 }

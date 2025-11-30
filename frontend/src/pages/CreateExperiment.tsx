@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { v4 as uuid } from 'uuid'
 import CodeEditor from '../components/CodeEditor'
 import { createExperiment } from '../services/api'
 import { Implementation } from '../types'
@@ -14,7 +13,7 @@ export default function CreateExperiment() {
   const [language, setLanguage] = useState<'python' | 'typescript'>('python')
 
   function addImplementation() {
-    const id = uuid()
+    const id = crypto.randomUUID()
     setImplementations((x) => x.concat([{ id, name: `Impl ${x.length + 1}`, language, code: '' }]))
   }
 
