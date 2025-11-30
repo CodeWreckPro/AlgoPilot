@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 type Item = { id: string; title: string; status: string; createdAt: string }
@@ -5,11 +6,7 @@ type Item = { id: string; title: string; status: string; createdAt: string }
 export default function Home() {
   const [items, setItems] = useState<Item[]>([])
 
-  function useState<T>(initial: T) {
-    return React.useState<T>(initial)
-  }
-
-  React.useEffect(() => {
+  useEffect(() => {
     const saved = localStorage.getItem('algopilot-experiments')
     if (saved) setItems(JSON.parse(saved))
   }, [])
