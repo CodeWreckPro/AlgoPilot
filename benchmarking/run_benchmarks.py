@@ -30,7 +30,7 @@ def run_python(code, input_data):
     mem_after = p.memory_info().rss
     os.remove(tmp)
     os.remove('__in.json')
-    return dt, max(mem_after - mem_before, 0), json.loads(out.stdout)
+    return dt, max(mem_after - mem_before, 0), None
 
 def run_ts(code, input_data):
     fd, tmp = tempfile.mkstemp(suffix='.ts')
@@ -51,7 +51,7 @@ def run_ts(code, input_data):
     mem_after = p.memory_info().rss
     os.remove(tmp)
     os.remove('__in.json')
-    return dt, max(mem_after - mem_before, 0), json.loads(out.stdout)
+    return dt, max(mem_after - mem_before, 0), None
 
 def main():
     ap = argparse.ArgumentParser()
@@ -74,7 +74,7 @@ def main():
         json.dump({'experimentId': args.experiment_id, 'results': results}, f)
     subprocess.run([sys.executable, 'benchmarking/train_model.py', '--experiment-id', args.experiment_id], check=True)
     subprocess.run([sys.executable, 'benchmarking/generate_report.py', '--experiment-id', args.experiment_id], check=True)
-    # Publishing to gh-pages is handled by the workflow using a dedicated worktree
+    
 
 if __name__ == '__main__':
     main()
