@@ -26,7 +26,7 @@ export default function ExperimentDetails() {
           try {
             const raw = await fetch(`https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/raw_results.json`).then((x) => x.json())
             rr.results = raw.results
-          } catch {}
+          } catch { void 0 }
         }
         setSummary(rr)
         try {
@@ -36,7 +36,7 @@ export default function ExperimentDetails() {
           if (line) {
             setRecommendedText(line.replace('Recommended: ', '').trim())
           }
-        } catch {}
+        } catch { void 0 }
         try {
           const base = `https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/ml`
           const session1 = await ort.InferenceSession.create(`${base}/model.onnx`)
