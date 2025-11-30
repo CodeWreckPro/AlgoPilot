@@ -10,6 +10,7 @@ export default function ExperimentDetails() {
   const [status, setStatus] = useState('loading')
   const [summary, setSummary] = useState<ResultsSummary | null>(null)
   const [predictions, setPredictions] = useState<{ size: number; runtimeMs: number; memoryBytes: number }[]>([])
+  const [recommendedText, setRecommendedText] = useState<string>('')
 
   useEffect(() => {
     let mounted = true
@@ -21,14 +22,21 @@ export default function ExperimentDetails() {
       if (s.status === 'completed') {
         const r = await getExperimentResults(id)
         const rr: ResultsSummary = r as ResultsSummary
-        // if results missing, fetch raw_results.json directly from gh-pages
         if (!('results' in rr) || !Array.isArray(rr.results)) {
           try {
             const raw = await fetch(`https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/raw_results.json`).then((x) => x.json())
             rr.results = raw.results
-          } catch { /* ignore */ }
+          } catch {}
         }
         setSummary(rr)
+        try {
+          const reportUrl = `https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/report.md`
+          const text = await fetch(reportUrl).then((x) => x.text())
+          const line = text.split(/\r?\n/).find((l) => l.startsWith('Recommended: '))
+          if (line) {
+            setRecommendedText(line.replace('Recommended: ', '').trim())
+          }
+        } catch {}
         try {
           const base = `https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/ml`
           const session1 = await ort.InferenceSession.create(`${base}/model.onnx`)
@@ -60,6 +68,7 @@ export default function ExperimentDetails() {
   const data = (summary?.results || []).map((x) => ({ size: x.size, runtimeMs: x.runtimeMs, memoryBytes: x.memoryBytes }))
 
   function recommendedLabel() {
+    if (recommendedText) return recommendedText
     if (!summary) return ''
     const order: string[] = []
     for (const r of summary.results || []) {
@@ -88,7 +97,7 @@ export default function ExperimentDetails() {
       {predictions.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold mb-2">Predictions</h2>
-          <div className="border rounded p-3 bg-white">
+          <div className="border rounded p-3 bg-gray-800 border-gray-700">
             {predictions.map((p) => (
               <div key={p.size} className="flex gap-4"><div>Size {p.size}</div><div>Runtime {p.runtimeMs.toFixed(2)} ms</div><div>Memory {Math.round(p.memoryBytes)} B</div></div>
             ))}
@@ -96,7 +105,7 @@ export default function ExperimentDetails() {
         </div>
       )}
       {summary && (
-        <div className="border rounded p-3 bg-white">
+        <div className="border rounded p-3 bg-gray-800 border-gray-700">
           <h2 className="text-lg font-semibold mb-2">AI Insights</h2>
           <div>Class: {summary.ai.complexityClass}</div>
           <div>Recommended: {recommendedLabel()}</div>
@@ -104,7 +113,7 @@ export default function ExperimentDetails() {
         </div>
       )}
       {summary && (
-        <div className="border rounded p-3 bg-white">
+        <div className="border rounded p-3 bg-gray-800 border-gray-700">
           <h2 className="text-lg font-semibold mb-2">Report</h2>
           <div>
             <a className="text-blue-600 underline" target="_blank" href={`https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/report.md`}>Open report.md</a>

@@ -5,8 +5,8 @@ import ExperimentDetails from './pages/ExperimentDetails'
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white">
+    <div className="min-h-screen bg-gray-900 text-gray-100">
+      <header className="border-b bg-gray-800 border-gray-700">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-xl font-semibold">AlgoPilot</Link>
           <nav className="flex gap-4">

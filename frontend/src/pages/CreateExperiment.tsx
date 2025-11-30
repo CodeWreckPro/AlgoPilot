@@ -45,33 +45,33 @@ export default function CreateExperiment() {
         <div className="space-y-3">
           <label className="block">
             <span className="block mb-1">Title</span>
-            <input className="w-full border rounded p-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input className="w-full border rounded p-2 bg-gray-900 border-gray-700 text-gray-100" value={title} onChange={(e) => setTitle(e.target.value)} />
           </label>
           <label className="block">
             <span className="block mb-1">Language</span>
-            <select className="w-full border rounded p-2" value={language} onChange={(e) => setLanguage(e.target.value as 'python' | 'typescript')}>
+            <select className="w-full border rounded p-2 bg-gray-900 border-gray-700 text-gray-100" value={language} onChange={(e) => setLanguage(e.target.value as 'python' | 'typescript')}>
               <option value="python">Python</option>
               <option value="typescript">TypeScript</option>
             </select>
           </label>
           <label className="block">
             <span className="block mb-1">Input sizes</span>
-            <input className="w-full border rounded p-2" value={sizes} onChange={(e) => setSizes(e.target.value)} />
+            <input className="w-full border rounded p-2 bg-gray-900 border-gray-700 text-gray-100" value={sizes} onChange={(e) => setSizes(e.target.value)} />
           </label>
           <label className="block">
             <span className="block mb-1">Distributions</span>
-            <input className="w-full border rounded p-2" value={dists} onChange={(e) => setDists(e.target.value)} />
+            <input className="w-full border rounded p-2 bg-gray-900 border-gray-700 text-gray-100" value={dists} onChange={(e) => setDists(e.target.value)} />
           </label>
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2"><input type="checkbox" checked={metricsRuntime} onChange={(e) => setMetricsRuntime(e.target.checked)} /> Runtime</label>
             <label className="flex items-center gap-2"><input type="checkbox" checked={metricsMemory} onChange={(e) => setMetricsMemory(e.target.checked)} /> Memory</label>
           </div>
-          <button className="px-3 py-2 bg-blue-600 text-white rounded" onClick={addImplementation}>Add Implementation</button>
+          <button className="px-3 py-2 bg-blue-500 text-white rounded" onClick={addImplementation}>Add Implementation</button>
         </div>
         <div className="space-y-6">
           {implementations.map((impl) => (
-            <div key={impl.id} className="border rounded p-3">
-              <input className="w-full border rounded p-2 mb-2" value={impl.name} onChange={(e) => updateImpl(impl.id, { name: e.target.value })} />
+            <div key={impl.id} className="border rounded p-3 bg-gray-800 border-gray-700">
+              <input className="w-full border rounded p-2 mb-2 bg-gray-900 border-gray-700 text-gray-100" value={impl.name} onChange={(e) => updateImpl(impl.id, { name: e.target.value })} />
               <CodeEditor language={impl.language} value={impl.code} onChange={(v) => updateImpl(impl.id, { code: v })} />
             </div>
           ))}

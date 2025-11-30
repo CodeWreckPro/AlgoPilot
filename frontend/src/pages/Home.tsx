@@ -15,9 +15,9 @@ export default function Home() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold">Experiments</h1>
-        <Link to="/create" className="px-3 py-2 bg-blue-600 text-white rounded">Create Experiment</Link>
+        <Link to="/create" className="px-3 py-2 bg-blue-500 text-white rounded">Create Experiment</Link>
       </div>
-      <div className="border rounded bg-white">
+      <div className="border rounded bg-gray-800 border-gray-700">
         <table className="w-full">
           <thead>
             <tr className="text-left">
@@ -28,8 +28,8 @@ export default function Home() {
           </thead>
           <tbody>
             {items.map((x) => (
-              <tr key={x.id} className="border-t">
-                <td className="p-3"><Link to={`/experiments/${x.id}`} className="text-blue-600 underline">{x.title}</Link></td>
+              <tr key={x.id} className="border-t border-gray-700">
+                <td className="p-3"><Link to={`/experiments/${x.id}`} className="text-blue-400 underline">{x.title}</Link></td>
                 <td className="p-3">{x.status}</td>
                 <td className="p-3">{new Date(x.createdAt).toLocaleString()}</td>
               </tr>

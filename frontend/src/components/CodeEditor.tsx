@@ -8,8 +8,8 @@ type Props = {
 
 export default function CodeEditor({ language, value, onChange }: Props) {
   return (
-    <div className="border rounded">
-      <Editor height="300px" defaultLanguage={language} value={value} onChange={(v) => onChange(v || '')} options={{ minimap: { enabled: false } }} />
+    <div className="border rounded border-gray-700">
+      <Editor height="300px" theme="vs-dark" defaultLanguage={language} value={value} onChange={(v) => onChange(v || '')} options={{ minimap: { enabled: false } }} />
     </div>
   )
 }
