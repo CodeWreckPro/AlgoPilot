@@ -39,4 +39,8 @@ jobs:
         with:
           branch: gh-pages
           folder: frontend/dist
+          target-folder: ui
           clean: true
+          clean-exclude: |
+            experiments
+            ml

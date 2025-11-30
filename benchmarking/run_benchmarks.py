@@ -74,7 +74,7 @@ def main():
         json.dump({'experimentId': args.experiment_id, 'results': results}, f)
     subprocess.run([sys.executable, 'benchmarking/train_model.py', '--experiment-id', args.experiment_id], check=True)
     subprocess.run([sys.executable, 'benchmarking/generate_report.py', '--experiment-id', args.experiment_id], check=True)
-    subprocess.run(['git', 'checkout', 'gh-pages'], check=True)
+    # assume workflow already on gh-pages
     os.makedirs(os.path.join('experiments', args.experiment_id), exist_ok=True)
     for name in ['raw_results.json', 'results.json', 'report.md']:
         src = os.path.join('experiments', args.experiment_id, name)

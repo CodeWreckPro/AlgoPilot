@@ -21,6 +21,13 @@ export default function ExperimentDetails() {
       if (s.status === 'completed') {
         const r = await getExperimentResults(id)
         const rr: ResultsSummary = r as ResultsSummary
+        // if results missing, fetch raw_results.json directly from gh-pages
+        if (!('results' in rr) || !Array.isArray(rr.results)) {
+          try {
+            const raw = await fetch(`https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/raw_results.json`).then((x) => x.json())
+            rr.results = raw.results
+          } catch { /* ignore */ }
+        }
         setSummary(rr)
         try {
           const base = `https://raw.githubusercontent.com/${import.meta.env.VITE_GITHUB_OWNER}/${import.meta.env.VITE_GITHUB_REPO}/gh-pages/experiments/${id}/ml`
@@ -52,6 +59,16 @@ export default function ExperimentDetails() {
 
   const data = (summary?.results || []).map((x) => ({ size: x.size, runtimeMs: x.runtimeMs, memoryBytes: x.memoryBytes }))
 
+  function recommendedLabel() {
+    if (!summary) return ''
+    const order: string[] = []
+    for (const r of summary.results || []) {
+      if (!order.includes(r.implementationId)) order.push(r.implementationId)
+    }
+    const idx = order.indexOf(summary.ai.recommendedImplementationId)
+    return idx >= 0 ? `Implementation ${idx + 1}` : summary.ai.recommendedImplementationId
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Experiment {id}</h1>
@@ -82,7 +99,7 @@ export default function ExperimentDetails() {
         <div className="border rounded p-3 bg-white">
           <h2 className="text-lg font-semibold mb-2">AI Insights</h2>
           <div>Class: {summary.ai.complexityClass}</div>
-          <div>Recommended: {summary.ai.recommendedImplementationId}</div>
+          <div>Recommended: {recommendedLabel()}</div>
           <div className="mt-2 whitespace-pre-wrap">{summary.ai.justification}</div>
         </div>
       )}

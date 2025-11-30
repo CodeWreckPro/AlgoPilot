@@ -25,20 +25,31 @@ def complexity_label(sizes, runtimes):
         return 'O(n^k)'
 
 def train(exp_id):
-    data = load_results(exp_id)['results']
+    raw = load_results(exp_id)
+    data = raw['results']
     sizes = np.array([d['size'] for d in data]).reshape(-1, 1)
     runtime = np.array([d['runtimeMs'] for d in data])
     memory = np.array([d['memoryBytes'] for d in data])
     lr_runtime = LinearRegression().fit(sizes, runtime)
     lr_memory = LinearRegression().fit(sizes, memory)
     pred_sizes = sizes.flatten().tolist()
+
+    # pick recommended by lowest runtime at largest size
+    largest = max([d['size'] for d in data])
+    by_impl = {}
+    for d in data:
+        if d['size'] == largest:
+            by_impl.setdefault(d['implementationId'], []).append(d['runtimeMs'])
+    recommended = min(by_impl.items(), key=lambda kv: np.mean(kv[1]))[0] if by_impl else data[0]['implementationId']
+
     summary = {
         'experimentId': exp_id,
+        'results': data,
         'ai': {
             'complexityClass': complexity_label(pred_sizes, runtime.tolist()),
             'predicted': [{'size': int(s), 'runtimeMs': float(lr_runtime.predict([[s]])[0]), 'memoryBytes': float(lr_memory.predict([[s]])[0])} for s in sorted(set(pred_sizes))],
-            'recommendedImplementationId': data[0]['implementationId'],
-            'justification': 'Based on linear fit of runtime and memory.'
+            'recommendedImplementationId': recommended,
+            'justification': 'Based on linear fit and runtime at largest size.'
         }
     }
     with open(os.path.join('experiments', exp_id, 'results.json'), 'w') as f:
